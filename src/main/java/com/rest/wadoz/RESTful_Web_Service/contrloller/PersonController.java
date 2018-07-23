@@ -4,10 +4,9 @@ import com.rest.wadoz.RESTful_Web_Service.exception.NotFoundPersonException;
 import com.rest.wadoz.RESTful_Web_Service.model.Person;
 import com.rest.wadoz.RESTful_Web_Service.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/person")
@@ -17,21 +16,31 @@ public class PersonController {
     private PersonRepository personRepository;
 
     /**
-     *  --> Show all Person in database
+     * --> Show all Person in database
      */
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET )
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ResponseBody
     public Iterable<Person> getAllPerson() {
         return personRepository.findAll();
     }
+
     /**
-     *  --> Create a new Person and save it in the database.
+     * --> Show a Person in database by Id
+     */
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Optional<Person> getPerson(@PathVariable Long id) {
+        return personRepository.findById(id);
+    }
+
+    /**
+     * --> Create a new Person and save it in the database.
      */
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
     @ResponseBody
-    public String addOnePerson(String firstName, String lastName, String phoneNumber) {
+    public String addOnePerson(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String phoneNumber) {
         String personId = "";
         try {
             Person person = new Person(firstName, lastName, phoneNumber);
@@ -44,7 +53,7 @@ public class PersonController {
     }
 
     /**
-     *  --> Delete the Person from database.
+     * --> Delete the Person from database.
      */
 
     @RequestMapping(value = "/del", method = RequestMethod.DELETE)
@@ -60,7 +69,7 @@ public class PersonController {
     }
 
     /**
-     *  --> Find the Person in the database by First Name.
+     * --> Find the Person in the database by First Name.
      */
 
     @RequestMapping(value = "/find", method = RequestMethod.GET)
