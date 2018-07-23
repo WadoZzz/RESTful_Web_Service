@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Start-Class: com.rest.wadoz.RESTful_Web_Service.ResTfulWebServiceAppli
+ cation
+Main-Class: org.springframework.boot.loader.JarLauncher
+
