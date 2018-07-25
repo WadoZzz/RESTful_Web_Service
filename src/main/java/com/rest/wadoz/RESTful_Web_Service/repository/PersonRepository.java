@@ -8,7 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface PersonRepository extends CrudRepository<Person, Long> {
-    Person findByFirstName(String firstName);
 
-    Person getPersonById(Long id);
 }

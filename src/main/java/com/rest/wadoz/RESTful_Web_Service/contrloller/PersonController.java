@@ -4,8 +4,12 @@ import com.rest.wadoz.RESTful_Web_Service.exception.NotFoundPersonException;
 import com.rest.wadoz.RESTful_Web_Service.model.Person;
 import com.rest.wadoz.RESTful_Web_Service.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,9 +24,9 @@ public class PersonController {
      */
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    @ResponseBody
-    public Iterable<Person> getAllPerson() {
-        return personRepository.findAll();
+    public ResponseEntity<List<Person>> findAll() {
+        List<Person> personList = (List<Person>) personRepository.findAll();
+        return ResponseEntity.ok(personList);
     }
 
     /**
@@ -30,59 +34,39 @@ public class PersonController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Optional<Person> getPerson(@PathVariable Long id) {
-        return personRepository.findById(id);
+    public ResponseEntity<Optional> getPersonById(@PathVariable Long id) {
+        try {
+            Optional<Person> person = personRepository.findById(id);
+            return ResponseEntity.ok(person);
+        } catch (NotFoundPersonException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     /**
      * --> Create a new Person and save it in the database.
      */
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
-    @ResponseBody
-    public String addOnePerson(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String phoneNumber) {
-        String personId = "";
-        try {
-            Person person = new Person(firstName, lastName, phoneNumber);
-            personRepository.save(person);
-            personId = String.valueOf(person.getId());
-        } catch (NotFoundPersonException ex) {
-            return "Error creating the Person " + ex.toString();
-        }
-        return "Person successfully created with id = " + personId;
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ResponseEntity<Person> createPerson(Person person) {
+        personRepository.save(person);
+        HttpHeaders respHeader = new HttpHeaders();
+        return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
     }
 
     /**
      * --> Delete the Person from database.
      */
 
-    @RequestMapping(value = "/del", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/del/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deletePerson(Long id) {
+    public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
         try {
-            Person person = new Person(id);
-            personRepository.delete(person);
+            personRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
         } catch (NotFoundPersonException ex) {
-            return "Error deleting the Person " + ex.toString();
+            return ResponseEntity.notFound().build();
         }
-        return "Person successfully deleted !";
-    }
-
-    /**
-     * --> Find the Person in the database by First Name.
-     */
-
-    @RequestMapping(value = "/find", method = RequestMethod.GET)
-    @ResponseBody
-    public String getFirstName(String firstName) {
-        String userId = "";
-        try {
-            Person person = personRepository.findByFirstName(firstName);
-            userId = String.valueOf(person.getId());
-        } catch (NotFoundPersonException ex) {
-            return "Person not found";
-        }
-        return "The person id is: " + userId;
     }
 
     /**
@@ -90,18 +74,17 @@ public class PersonController {
      * database having the passed id.
      */
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public String updatePerson(long id, String firstName, String lastName, String phoneNumber) {
+    public ResponseEntity<Person> updatePerson(Person person, @PathVariable Long id) {
         try {
-            Person person = personRepository.getPersonById(id);
-            person.setFirstName(firstName);
-            person.setLastName(lastName);
-            person.setPhoneNumber(phoneNumber);
+            person.setId(id);
             personRepository.save(person);
+            HttpHeaders respHeader = new HttpHeaders();
+            return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
         } catch (NotFoundPersonException ex) {
-            return "Error updating the person: " + ex.toString();
+            return ResponseEntity.notFound().build();
         }
-        return "Person successfully updated!";
     }
+
 }
