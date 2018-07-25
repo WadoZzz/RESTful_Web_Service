@@ -24,7 +24,7 @@ public class PersonController {
      */
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<Person>> findAll() {
+    public ResponseEntity<List<Person>> findAllPerson() {
         List<Person> personList = (List<Person>) personRepository.findAll();
         return ResponseEntity.ok(personList);
     }
