@@ -3,6 +3,7 @@ package com.rest.wadoz.RESTful_Web_Service.contrloller;
 import com.rest.wadoz.RESTful_Web_Service.exception.NotFoundPersonException;
 import com.rest.wadoz.RESTful_Web_Service.model.Person;
 import com.rest.wadoz.RESTful_Web_Service.repository.PersonRepository;
+import com.rest.wadoz.RESTful_Web_Service.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class PersonController {
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
 
     /**
      * --> Show all Person in database
@@ -25,7 +26,7 @@ public class PersonController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseEntity<List<Person>> findAllPerson() {
-        List<Person> personList = (List<Person>) personRepository.findAll();
+        List<Person> personList = (List<Person>) personService.findAllPerson();
         return ResponseEntity.ok(personList);
     }
 
@@ -36,7 +37,7 @@ public class PersonController {
     @ResponseBody
     public ResponseEntity<Optional> getPersonById(@PathVariable Long id) {
         try {
-            Optional<Person> person = personRepository.findById(id);
+            Optional<Person> person = personService.getPersonById(id);
             return ResponseEntity.ok(person);
         } catch (NotFoundPersonException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -49,7 +50,7 @@ public class PersonController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<Person> createPerson(Person person) {
-        personRepository.save(person);
+       personService.createPerson(person);
         HttpHeaders respHeader = new HttpHeaders();
         return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
     }
@@ -62,7 +63,7 @@ public class PersonController {
     @ResponseBody
     public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
         try {
-            personRepository.deleteById(id);
+           personService.deletePerson(id);
             return ResponseEntity.noContent().build();
         } catch (NotFoundPersonException ex) {
             return ResponseEntity.notFound().build();
@@ -78,8 +79,8 @@ public class PersonController {
     @ResponseBody
     public ResponseEntity<Person> updatePerson(Person person, @PathVariable Long id) {
         try {
-            person.setId(id);
-            personRepository.save(person);
+
+            personService.updatePerson(person, id);
             HttpHeaders respHeader = new HttpHeaders();
             return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
         } catch (NotFoundPersonException ex) {

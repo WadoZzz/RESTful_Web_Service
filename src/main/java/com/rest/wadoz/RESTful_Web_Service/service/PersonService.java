@@ -2,19 +2,18 @@ package com.rest.wadoz.RESTful_Web_Service.service;
 
 import com.rest.wadoz.RESTful_Web_Service.model.Person;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PersonService {
 
-    List<Person> findAllPerson();
+    Iterable<Person> findAllPerson();
 
-    Optional getPersonById(Long id);
+    Optional<Person> getPersonById(Long id);
 
     Person createPerson(Person person);
 
-    Person deletePerson(Long id);
+    void deletePerson(Long id);
 
-    Person updatePerson(Person person, Long id);
+    void updatePerson(Person person, Long id);
 
 }
