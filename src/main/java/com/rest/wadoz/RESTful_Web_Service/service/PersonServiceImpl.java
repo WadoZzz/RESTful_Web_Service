@@ -40,14 +40,14 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void delete(Long id) {
-        if (personRepository.findById(id).isPresent()) {
+        if (personRepository.existsById(id)) {
             personRepository.deleteById(id);
         } else throw new NotFoundPersonException();
     }
 
     @Override
     public void update(Long id, Person person) {
-        if (personRepository.findById(id).isPresent()){
+        if (personRepository.existsById(id)){
             personRepository.save(person);
         } else throw new NotFoundPersonException();
     }
