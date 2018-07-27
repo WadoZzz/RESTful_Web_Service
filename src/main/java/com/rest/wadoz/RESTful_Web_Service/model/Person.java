@@ -9,17 +9,14 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @Column(name = "firstName")
     private String firstName;
-
+    @Column(name = "lastName")
     private String lastName;
+    @Column(name = "phoneNumber")
     private String phoneNumber;
 
     public Person() {
-    }
-
-    public Person(Long id) {
-        this.id = id;
     }
 
     public Person(String firstName, String lastName, String phoneNumber) {

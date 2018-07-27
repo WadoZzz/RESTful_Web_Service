@@ -2,42 +2,46 @@ package com.rest.wadoz.RESTful_Web_Service.contrloller;
 
 import com.rest.wadoz.RESTful_Web_Service.exception.NotFoundPersonException;
 import com.rest.wadoz.RESTful_Web_Service.model.Person;
-import com.rest.wadoz.RESTful_Web_Service.repository.PersonRepository;
 import com.rest.wadoz.RESTful_Web_Service.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/person")
 public class PersonController {
 
+
+    private final PersonService personService;
+
     @Autowired
-    private PersonService personService;
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
 
     /**
      * --> Show all Person in database
      */
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<Person>> findAllPerson() {
-        List<Person> personList = (List<Person>) personService.findAllPerson();
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Page<Person>> findAll(Pageable pageable) {
+        Page<Person> personList = personService.findAll(pageable);
         return ResponseEntity.ok(personList);
     }
 
     /**
      * --> Show a Person in database by Id
      */
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<Optional> getPersonById(@PathVariable Long id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Optional> get(@PathVariable Long id) {
         try {
-            Optional<Person> person = personService.getPersonById(id);
+            Optional<Person> person = personService.getById(id);
             return ResponseEntity.ok(person);
         } catch (NotFoundPersonException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -48,26 +52,21 @@ public class PersonController {
      * --> Create a new Person and save it in the database.
      */
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<Person> createPerson(Person person) {
-       personService.createPerson(person);
-        HttpHeaders respHeader = new HttpHeaders();
-        return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Person> create(Person person) {
+        personService.create(person);
+        return new ResponseEntity<>(person, HttpStatus.CREATED);
+
     }
 
     /**
      * --> Delete the Person from database.
      */
 
-    @RequestMapping(value = "/del/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<Person> deletePerson(@PathVariable Long id) {
-        try {
-           personService.deletePerson(id);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundPersonException ex) {
-            return ResponseEntity.notFound().build();
-        }
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Person> delete(@PathVariable Long id) {
+        personService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -75,17 +74,14 @@ public class PersonController {
      * database having the passed id.
      */
 
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    @ResponseBody
-    public ResponseEntity<Person> updatePerson(Person person, @PathVariable Long id) {
-        try {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 
-            personService.updatePerson(person, id);
-            HttpHeaders respHeader = new HttpHeaders();
-            return new ResponseEntity<>(person, respHeader, HttpStatus.CREATED);
-        } catch (NotFoundPersonException ex) {
-            return ResponseEntity.notFound().build();
-        }
+    public @ResponseBody
+    ResponseEntity<Person> update(@PathVariable Long id,  Person person) {
+
+        personService.update(id, person);
+        return new ResponseEntity<>(person, HttpStatus.OK);
+
     }
 
 }
