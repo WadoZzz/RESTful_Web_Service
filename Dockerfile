@@ -1,5 +1,9 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8
 VOLUME /tmp
-ARG JAR_FILE
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+EXPOSE 8080
+CMD java -jar build/libs/docker.rest-0.0.1.jar
+ADD build/libs/docker.rest-0.0.1.jar build/libs/docker.rest-0.0.1.jar
+ENTRYPOINT ["java","-jar","build/libs/docker.rest-0.0.1.jar"]
+
+
+
