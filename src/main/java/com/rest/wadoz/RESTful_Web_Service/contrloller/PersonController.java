@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/person")
@@ -39,9 +37,9 @@ public class PersonController {
      * --> Show a Person in database by Id
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Optional> get(@PathVariable Long id) {
+    public ResponseEntity<Person> get(@PathVariable Long id) {
         try {
-            Optional<Person> person = personService.getById(id);
+            Person person = personService.getById(id);
             return ResponseEntity.ok(person);
         } catch (NotFoundPersonException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

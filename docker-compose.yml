@@ -1,0 +1,23 @@
+version: "3.2"
+
+services:
+  app:
+    image: wadoz/rest-full:latest
+    depends_on:
+    - postgres
+    ports:
+    - 8080:8080
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: wadoz
+      POSTGRES_DB_PASSWORD_FILE: /run/secrets/pg_password
+    volumes:
+    - /data:/var/lib/postgresql
+    secrets:
+    - pg_password
+
+secrets:
+  pg_password:
+    external: true

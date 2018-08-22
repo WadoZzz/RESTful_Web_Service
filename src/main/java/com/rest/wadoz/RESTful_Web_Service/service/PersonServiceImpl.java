@@ -8,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class PersonServiceImpl implements PersonService {
 
@@ -26,9 +24,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getById(Long id) {
-        if (personRepository.existsById(id)) {
-            return personRepository.findById(id);
+    public Person getById(Long id) {
+        if (personRepository.exists(id)) {
+            return personRepository.findOne(id);
         } else throw new NotFoundPersonException();
 
     }
@@ -40,14 +38,14 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void delete(Long id) {
-        if (personRepository.existsById(id)) {
-            personRepository.deleteById(id);
+        if (personRepository.exists(id)) {
+            personRepository.delete(id);
         } else throw new NotFoundPersonException();
     }
 
     @Override
     public void update(Long id, Person person) {
-        if (personRepository.existsById(id)){
+        if (personRepository.exists(id)){
             personRepository.save(person);
         } else throw new NotFoundPersonException();
     }

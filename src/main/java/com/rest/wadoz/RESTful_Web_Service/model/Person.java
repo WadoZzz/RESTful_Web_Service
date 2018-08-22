@@ -1,7 +1,6 @@
 package com.rest.wadoz.RESTful_Web_Service.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "person")
