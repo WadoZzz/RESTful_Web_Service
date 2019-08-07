@@ -1,5 +1,16 @@
+### Gradle ###
 .gradle
+/gradle
 !gradle/wrapper/gradle-wrapper.jar
+=======
+build/
+out/
+gradle/wrapper*
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+**/build/
 
 ### STS ###
 .apt_generated

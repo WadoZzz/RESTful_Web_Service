@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl implements IPersonService {
 
-    private final PersonRepository personRepository;
+    private PersonRepository personRepository;
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository) {
@@ -30,7 +30,6 @@ public class PersonServiceImpl implements PersonService {
         if (personRepository.existsById(id)) {
             return personRepository.findById(id);
         } else throw new NotFoundPersonException();
-
     }
 
     @Override

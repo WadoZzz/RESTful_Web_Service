@@ -1,0 +1,23 @@
+version: "3.2"
+services:
+  mysql:
+    container_name: 'mysql-connect'
+    image: mysql:8.0.12
+    environment:
+      MYSQL_USER: wadoz
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: password
+    restart: always
+
+  app:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - 9090:9090
+    command: gradle clean bootRun
+    depends_on:
+      - mysql
+
